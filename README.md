@@ -265,9 +265,44 @@ public class ExemploProxy {
 ## 4. Smart Reference (Referência Inteligente)
 Este Proxy é utilizado para gerenciar referências a objetos, permitindo que ações adicionais sejam executadas ao acessar um objeto, como contar referências ou carregar objetos persistentes.
 ### Código
+``` java
+class ObjetoPersistente {
+    public void carregar() {
+        System.out.println("Objeto persistente carregado.");
+    }
+}
 
-## Estrutura
+class SmartReference {
+    private ObjetoPersistente objeto;
+    private int contagemReferencias;
 
+    public void acessar() {
+        if (objeto == null) {
+            objeto = new ObjetoPersistente();
+            objeto.carregar();
+        }
+        contagemReferencias++;
+        System.out.println("Referência acessada. Total de referências: " + contagemReferencias);
+    }
+
+    public void liberar() {
+        contagemReferencias--;
+        if (contagemReferencias <= 0) {
+            objeto = null;
+            System.out.println("Objeto liberado da memória.");
+        }
+    }
+}
+public class ExemploSmartReference {
+    public static void main(String[] args) {
+        SmartReference referencia = new SmartReference();
+        referencia.acessar();
+        referencia.acessar();
+        referencia.liberar();
+        referencia.liberar();
+    }
+}
+```
 
 ## Colaborações:
 - O Proxy gerencia o acesso ao RealSubject, podendo delegar chamadas ou adicionar funcionalidade extra.
