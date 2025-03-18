@@ -7,10 +7,117 @@ O padrão Proxy fornece um substituto ou representante de um objeto para control
 Surrogate
 
 ## Motivação
+Em sistemas que gerenciam dados sensíveis, como informações de saúde, o acesso deve ser controlado para garantir a privacidade. O padrão Proxy atua como intermediário, verificando permissões antes de permitir o acesso aos dados. Além disso, ele pode implementar caching para otimizar o desempenho, garantindo que apenas usuários autorizados acessem informações críticas.
+
+## Estrutura
+```mermaid
+classDiagram
+    class SistemaSaude {
+        +visualizarDados(paciente: String)
+        +editarDados(paciente: String, novosDados: String)
+    }
+
+    class SistemaSaudeReal {
+        +visualizarDados(paciente: String)
+        +editarDados(paciente: String, novosDados: String)
+    }
+
+    class ProxySistemaSaude {
+        -sistemaReal: SistemaSaudeReal
+        -usuario: String
+        +visualizarDados(paciente: String)
+        +editarDados(paciente: String, novosDados: String)
+        -temPermissao(): boolean
+    }
+
+    SistemaSaude <|.. SistemaSaudeReal
+    SistemaSaude <|.. ProxySistemaSaude
+```
+
+## Exemplo
+```java
+interface SistemaSaude {
+    void visualizarDados(String paciente);
+    void editarDados(String paciente, String novosDados);
+}
+
+class SistemaSaudeReal implements SistemaSaude {
+    @Override
+    public void visualizarDados(String paciente) {
+        System.out.println("Visualizando dados do paciente: " + paciente);
+    }
+
+    @Override
+    public void editarDados(String paciente, String novosDados) {
+        System.out.println("Editando dados do paciente: " + paciente + " com novos dados: " + novosDados);
+    }
+}
+
+class ProxySistemaSaude implements SistemaSaude {
+    private SistemaSaudeReal sistemaReal; // Referência para o objeto real
+    private String usuario; // Usuário atual
+
+    public ProxySistemaSaude(String usuario) {
+        this.usuario = usuario;
+        this.sistemaReal = new SistemaSaudeReal(); // Cria o objeto real
+    }
+
+    @Override
+    public void visualizarDados(String paciente) {
+        if (temPermissao()) {
+            sistemaReal.visualizarDados(paciente);
+        } else {
+            System.out.println("Acesso negado. Você não tem permissão para visualizar os dados do paciente.");
+        }
+    }
+
+    @Override
+    public void editarDados(String paciente, String novosDados) {
+        if (temPermissao()) {
+            sistemaReal.editarDados(paciente, novosDados);
+        } else {
+            System.out.println("Acesso negado. Você não tem permissão para editar os dados do paciente.");
+        }
+    }
+
+    private boolean temPermissao() {
+        return "MEDICO".equals(usuario) || "ENFERMEIRO".equals(usuario);
+    }
+}
+
+public class ExemploProxySaude {
+    public static void main(String[] args) {
+        SistemaSaude sistemaMedico = new ProxySistemaSaude("MEDICO");
+        SistemaSaude sistemaEnfermeiro = new ProxySistemaSaude("ENFERMEIRO");
+        SistemaSaude sistemaUsuarioComum = new ProxySistemaSaude("USUARIO");
+
+        sistemaMedico.visualizarDados("Pedro Silva");
+
+        sistemaEnfermeiro.editarDados("Pedro Silva", "Alergia a dipirona");
+
+        sistemaUsuarioComum.visualizarDados("Pedro Silva");
+
+        sistemaUsuarioComum.editarDados("Pedro Silva", "Novo endereço: Rua 123");
+    }
+}
+```
+## Participantes:
+### Subject (SistemaSaude)
+- Define a interface comum para `RealSubject` (SistemaSaudeReal) e `Proxy` (ProxySistemaSaude).
+- Permite que o Proxy seja usado no lugar do RealSubject.
+### RealSubject (SistemaSaudeReal)
+- Implementa a lógica real de acesso e manipulação dos dados de saúde.
+- Só é criado quando necessário (Lazy Loading).
+### Proxy (ProxySistemaSaude)
+- Controla o acesso ao `RealSubject`.
+- Verifica permissões antes de permitir o acesso.
+- Adia a criação do `RealSubject` até que seja realmente necessário.
+### Cliente (ExemploProxySaude)    
+- Interage com o Proxy sem saber da existência do `RealSubject`.
+- Testa o comportamento do Proxy com diferentes usuários.
 
 ## Aplicabilidade
 O padrão Proxy é aplicável em várias situações, incluindo:
-
 
 ## 1. Proxy Remoto
 Este tipo de Proxy é utilizado quando um objeto está em um espaço de endereçamento diferente, como um servidor remoto. Ele atua como um intermediário, permitindo que o cliente interaja com o objeto como se estivesse localmente.
@@ -160,13 +267,7 @@ Este Proxy é utilizado para gerenciar referências a objetos, permitindo que a�
 ### Código
 
 ## Estrutura
-![image](https://github.com/user-attachments/assets/6b155c4b-406a-472c-b763-da018a518681)
 
-
-## Participantes:
-- Subject (Arquivo): Define a interface comum para RealSubject e Proxy.
-- RealSubject (ArquivoReal): Implementa o comportamento real.
-- Proxy (ProxyArquivo): Controla o acesso a RealSubject, podendo armazenar referências e gerenciar chamadas.
 
 ## Colaborações:
 - O Proxy gerencia o acesso ao RealSubject, podendo delegar chamadas ou adicionar funcionalidade extra.
