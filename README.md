@@ -37,6 +37,21 @@ classDiagram
 ## Estrutura GOF
 ![image](https://github.com/user-attachments/assets/778e1992-85ca-4506-a5ee-cb1df4c2cb6b)
 
+## Participantes:
+### Subject (SistemaSaude)
+- Define a interface comum para `RealSubject` (SistemaSaudeReal) e `Proxy` (ProxySistemaSaude).
+- Permite que o Proxy seja usado no lugar do RealSubject.
+### RealSubject (SistemaSaudeReal)
+- Implementa a lógica real de acesso e manipulação dos dados de saúde.
+- Só é criado quando necessário (Lazy Loading).
+### Proxy (ProxySistemaSaude)
+- Controla o acesso ao `RealSubject`.
+- Verifica permissões antes de permitir o acesso.
+- Adia a criação do `RealSubject` até que seja realmente necessário.
+### Cliente (ExemploProxySaude)    
+- Interage com o Proxy sem saber da existência do `RealSubject`.
+- Testa o comportamento do Proxy com diferentes usuários.
+
 ## Exemplo do Código
 ```java
 interface SistemaSaude {
@@ -104,21 +119,6 @@ public class ExemploProxySaude {
     }
 }
 ```
-## Participantes:
-### Subject (SistemaSaude)
-- Define a interface comum para `RealSubject` (SistemaSaudeReal) e `Proxy` (ProxySistemaSaude).
-- Permite que o Proxy seja usado no lugar do RealSubject.
-### RealSubject (SistemaSaudeReal)
-- Implementa a lógica real de acesso e manipulação dos dados de saúde.
-- Só é criado quando necessário (Lazy Loading).
-### Proxy (ProxySistemaSaude)
-- Controla o acesso ao `RealSubject`.
-- Verifica permissões antes de permitir o acesso.
-- Adia a criação do `RealSubject` até que seja realmente necessário.
-### Cliente (ExemploProxySaude)    
-- Interage com o Proxy sem saber da existência do `RealSubject`.
-- Testa o comportamento do Proxy com diferentes usuários.
-  
 ## Implementação:
 1. **Definir a Interface do Sistema de Saúde:** Crie a interface que declara as operações essenciais para visualizar e editar dados de pacientes. @import "./src/app/SistemaSaude.java".
 2. **Implementar a Classe Real:** Utilize a classe SistemaSaudeReal para fornecer as implementações concretas das operações de visualização e edição de dados. @import "./src/app/SistemaSaudeReal.java".
