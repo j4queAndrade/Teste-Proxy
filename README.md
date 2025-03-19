@@ -9,7 +9,7 @@ Surrogate
 ## Motivação
 Em sistemas que gerenciam dados sensíveis, como informações de saúde, o acesso deve ser controlado para garantir a privacidade. O padrão Proxy atua como intermediário, verificando permissões antes de permitir o acesso aos dados. Além disso, ele pode implementar caching para otimizar o desempenho, garantindo que apenas usuários autorizados acessem informações críticas.
 
-## Estrutura
+## Exemplo Aplicado
 ```mermaid
 classDiagram
     class SistemaSaude {
@@ -33,8 +33,10 @@ classDiagram
     SistemaSaude <|.. SistemaSaudeReal
     SistemaSaude <|.. ProxySistemaSaude
 ```
+##Estrutura
+![image](https://github.com/user-attachments/assets/778e1992-85ca-4506-a5ee-cb1df4c2cb6b)
 
-## Exemplo
+## Exemplo do Código
 ```java
 interface SistemaSaude {
     void visualizarDados(String paciente);
@@ -305,105 +307,35 @@ public class ExemploSmartReference {
 ```
 
 ## Colaborações:
-- O Proxy gerencia o acesso ao RealSubject, podendo delegar chamadas ou adicionar funcionalidade extra.
+- Dependendo de sua categoria, o Proxy retransmite pedidos ao RealSubject quando adequado.
 
 ## Consequências:
-- Controle sobre a criação do objeto: O objeto real só é instanciado quando necessário.
-- Melhoria no desempenho: Pode reduzir chamadas a recursos dispendiosos (ex: carregamento de arquivos remotos).
-- Segurança e acesso controlado: Pode restringir acesso com autenticação e permissões.
+- O padrão Proxy introduz uma referência indireta ao acessar objetos, oferecendo várias funcionalidades conforme o tipo de proxy:
+- Proxies remotos ocultam a localização de um objeto em um espaço de endereçamento diferente.
+- Proxies virtuais otimizam a criação de objetos sob demanda.
+- Proxies de proteção e smart references realizam tarefas de gerenciamento ao acessar objetos.
+- O copy-on-write é uma otimização que adia a cópia de objetos grandes até que sejam modificados, evitando custos desnecessários. A cópia real do objeto só ocorre quando uma alteração é solicitada. Para isso, o objeto deve ter contagem de referências. Copiar o proxy apenas aumenta essa contagem. Quando a contagem chega a zero, o objeto é removido. Essa abordagem reduz significativamente os custos computacionais ao lidar com objetos pesados.
 
 ## Implementação:
-
-## Exemplo:
-
-Classe Arquivo - Subject:
-```java
-package proxy;
-
-public interface Arquivo {
-    void carregar();
-    void exibir();
-}
-```
-
-Classe ArquivoReal - RealSubject:
-```java
-package proxy;
-
-public class ArquivoReal implements Arquivo {
-    private String nome;
-
-    public ArquivoReal(String nome) {
-        this.nome = nome;
-        carregar();
-    }
-
-    @Override
-    public void carregar() {
-        System.out.println("Carregando arquivo: " + nome);
-    }
-
-    @Override
-    public void exibir() {
-        System.out.println("Exibindo arquivo: " + nome);
-    }
-}
-```
-
-Classe ProxyArquivo - Proxy:
-```java
-package proxy;
-
-public class ProxyArquivo implements Arquivo {
-    private ArquivoReal arquivoReal;
-    private String nome;
-
-    public ProxyArquivo(String nome) {
-        this.nome = nome;
-    }
-
-    @Override
-    public void carregar() {
-        if (arquivoReal == null) {
-            arquivoReal = new ArquivoReal(nome);
-        }
-    }
-
-    @Override
-    public void exibir() {
-        carregar();
-        arquivoReal.exibir();
-    }
-}
-```
-
-Classe Main - Cliente:
-```java
-package proxy;
-
-public class Main {
-    public static void main(String[] args) {
-        Arquivo arquivo = new ProxyArquivo("documento.pdf");
-        arquivo.exibir(); // Carrega e exibe
-        System.out.println("---");
-        arquivo.exibir(); // Apenas exibe, sem carregar novamente
-    }
-}
-```
+O padrão Proxy pode explorar as seguintes características:
+1. **Controle de Acesso:** O Proxy verifica se o usuário tem permissão para acessar operações, garantindo segurança em dados sensíveis.
+2. **Delegação de Chamadas:** O Proxy delega chamadas ao RealSubject, separando a lógica de controle de acesso da lógica de negócios.
+3. **Verificação de Permissões:** O Proxy checa se o usuário é médico ou enfermeiro. Se não, o acesso é negado.
+4. **Interface Comum:** Proxy e RealSubject implementam a mesma interface, permitindo interação intercambiável.
+5. **Instanciação Sob Demanda:** O Proxy cria o RealSubject apenas quando necessário, otimizando recursos.
+6. **Encapsulamento:** O Proxy encapsula a lógica de controle de acesso, facilitando a manutenção e a modificação das regras.
 
 ## Usos conhecidos:
-**Serviços remotos:** Representa objetos remotos em aplicações distribuídas.
+**- Sistemas Distribuídos:** Proxies atuam como intermediários entre clientes e objetos remotos, simplificando a comunicação.
 
-**Autenticação e segurança:** Restringe acesso a objetos sensíveis.
-Cache de imagens e arquivos: Evita carregamento repetitivo de recursos.
+**- Proxies Virtuais:** Criam objetos sob demanda, economizando recursos ao evitar a criação de instâncias pesadas até que sejam necessárias.
 
-**Controle de acesso a sistemas complexos:** Garante que apenas usuários autorizados interajam com determinados objetos.
+**- Controle de Acesso:** Proxies de proteção garantem que apenas usuários autorizados possam acessar recursos sensíveis.
 
 ## Padrões relacionados:
 **- Decorator:** Embora similar ao Proxy, o Decorator adiciona funcionalidades sem restringir acesso.
 
 **- Adapter:** Converte interfaces sem atuar como intermediário.
-
 
 ## Conclusão
 O padrão Proxy é uma ferramenta que oferece flexibilidade e controle em sistemas de software. Ao permitir que um objeto atue como um substituto para outro, ele facilita o gerenciamento de acesso, otimiza o uso de recursos e promove um design modular. Com suas diversas aplicações, desde Proxies Remotos até Proxies de Proteção e Referências Inteligentes. 
