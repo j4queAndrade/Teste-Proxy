@@ -120,10 +120,10 @@ public class ExemploProxySaude {
 }
 ```
 ## Implementação:
-1. **Definir a Interface do Sistema de Saúde:** Crie a interface que declara as operações essenciais para visualizar e editar dados de pacientes. @import "./src/app/SistemaSaude.java".
-2. **Implementar a Classe Real:** Utilize a classe SistemaSaudeReal para fornecer as implementações concretas das operações de visualização e edição de dados. @import "./src/app/SistemaSaudeReal.java".
-3. **Criar o Proxy:** Desenvolva a classe ProxySistemaSaude que controla o acesso ao SistemaSaudeReal, verificando as permissões do usuário antes de permitir operações. @import "./src/app/ProxySistemaSaude.java".
-4. **Construir o Cliente:** No método main da classe ExemploProxySaude, crie instâncias do proxy para diferentes tipos de usuários e teste as operações de visualização e edição de dados. @import "./src/app/ExemploProxySaude.java".
+1. **Definir a Interface do Sistema de Saúde:** Crie a interface que declara as operações essenciais para visualizar e editar dados de pacientes.
+2. **Implementar a Classe Real:** Utilize a classe SistemaSaudeReal para fornecer as implementações concretas das operações de visualização e edição de dados.
+3. **Criar o Proxy:** Desenvolva a classe ProxySistemaSaude que controla o acesso ao SistemaSaudeReal, verificando as permissões do usuário antes de permitir operações.
+4. **Construir o Cliente:** No método main da classe ExemploProxySaude, crie instâncias do proxy para diferentes tipos de usuários e teste as operações de visualização e edição de dados.
 
 ## Aplicabilidade
 O padrão Proxy é aplicável em várias situações, incluindo:
