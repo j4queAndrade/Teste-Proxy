@@ -261,23 +261,30 @@ public class ContaBancariaReal implements ContaBancaria{
     }
 }
 
-public class ProxySeguranca implements ContaBancaria{
-    private ContaBancaria contaReal;
+public class ProxySeguranca implements ContaBancaria {
+    private ContaBancariaReal contaReal;
+    private String titular;
+    private double saldo;
     private String papelUsuario;
 
     public ProxySeguranca(String titular, double saldo, String papelUsuario) {
-        this.contaReal = new ContaBancariaReal(titular, saldo);
+        this.titular = titular;
+        this.saldo = saldo;
         this.papelUsuario = papelUsuario;
     }
 
     @Override
     public void verSaldo() {
-        if ("ADMIN".equals(papelUsuario)) {
-            contaReal.verSaldo();
-        }
-        else {
+        if (!"ADMIN".equals(papelUsuario)) {
             System.out.println("Acesso negado. Você não tem permissão.");
+            return;
         }
+
+        if (contaReal == null) {
+            contaReal = new ContaBancariaReal(titular, saldo);
+        }
+
+        contaReal.verSaldo();
     }
 }
 
@@ -297,42 +304,58 @@ public class ExemploProxy {
 Este Proxy é utilizado para gerenciar referências a objetos, permitindo que ações adicionais sejam executadas ao acessar um objeto, como contar referências ou carregar objetos persistentes.
 ### Código
 ``` java
-class ObjetoPersistente {
-    public void carregar() {
-        System.out.println("Objeto persistente carregado.");
+class ServidorNetflix {
+    private String localizacao;
+
+    public ServidorNetflix(String localizacao) {
+        this.localizacao = localizacao;
+    }
+
+    public void conectar() {
+        System.out.println("Conectado ao servidor Netflix em " + localizacao);
     }
 }
 
-class SmartReference {
-    private ObjetoPersistente objeto;
-    private int contagemReferencias;
+class GerenciadorDeStreaming {
+    private ServidorNetflix servidor;
+    private int usuariosConectados;
+    private String localizacaoServidor;
 
-    public void acessar() {
-        if (objeto == null) {
-            objeto = new ObjetoPersistente();
-            objeto.carregar();
-        }
-        contagemReferencias++;
-        System.out.println("Referência acessada. Total de referências: " + contagemReferencias);
+    public GerenciadorDeStreaming(String localizacaoServidor) {
+        this.localizacaoServidor = localizacaoServidor;
     }
 
-    public void liberar() {
-        contagemReferencias--;
-        if (contagemReferencias <= 0) {
-            objeto = null;
-            System.out.println("Objeto liberado da memória.");
+    public void assistirFilme() {
+        if (servidor == null) {
+            servidor = new ServidorNetflix(localizacaoServidor);
+            servidor.conectar();
+        }
+        usuariosConectados++;
+        System.out.println("Usuário assistindo. Total de usuários conectados: " + usuariosConectados);
+    }
+
+    public void sairDoFilme() {
+        usuariosConectados--;
+        System.out.println("Usuário saiu. Restam " + usuariosConectados + " usuários conectados.");
+        if (usuariosConectados <= 0) {
+            servidor = null;
+            System.out.println("Nenhum usuário assistindo. Servidor liberado.");
         }
     }
 }
-public class ExemploSmartReference {
+
+public class NetflixSimulacao {
     public static void main(String[] args) {
-        SmartReference referencia = new SmartReference();
-        referencia.acessar();
-        referencia.acessar();
-        referencia.liberar();
-        referencia.liberar();
+        GerenciadorDeStreaming gerenciador = new GerenciadorDeStreaming("São Paulo");
+
+        gerenciador.assistirFilme(); 
+        gerenciador.assistirFilme(); 
+
+        gerenciador.sairDoFilme(); 
+        gerenciador.sairDoFilme(); 
     }
 }
+
 ```
 
 ## Colaborações:
