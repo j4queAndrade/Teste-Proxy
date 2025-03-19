@@ -132,36 +132,58 @@ O padrão Proxy é aplicável em várias situações, incluindo:
 Este tipo de Proxy é utilizado quando um objeto está em um espaço de endereçamento diferente, como um servidor remoto. Ele atua como um intermediário, permitindo que o cliente interaja com o objeto como se estivesse localmente.
 ### Código
 ```java
-interface ServicoRemoto {
-    String obterDados();
+interface Roteador {
+    void reiniciar();
+    String statusConexao();
 }
 
-class ServicoRemotoReal implements ServicoRemoto {
+class RoteadorReal implements Roteador {
     @Override
-    public String obterDados() {
-        return "Dados do serviço remoto.";
+    public void reiniciar() {
+        System.out.println("Roteador reiniciado.");
+    }
+
+    @Override
+    public String statusConexao() {
+        return "Conexão estável";
     }
 }
 
-class ProxyRemoto implements ServicoRemoto {
-    private ServicoRemotoReal servicoReal;
+class ProxyRoteador implements Roteador {
+    private RoteadorReal roteadorReal;
+    private String enderecoRemoto;
+
+    public ProxyRoteador(String enderecoRemoto) {
+        this.enderecoRemoto = enderecoRemoto;
+    }
 
     @Override
-    public String obterDados() {
-        if (servicoReal == null) {
-            servicoReal = new ServicoRemotoReal();
+    public void reiniciar() {
+ 
+        System.out.println("Conectando-se ao roteador remoto em: " + enderecoRemoto);
+        if (roteadorReal == null) {
+            roteadorReal = new RoteadorReal();
         }
-        return servicoReal.obterDados();
+        roteadorReal.reiniciar();
+    }
+
+    @Override
+    public String statusConexao() {
+        System.out.println("Conectando-se ao roteador remoto em: " + enderecoRemoto);
+        if (roteadorReal == null) {
+            roteadorReal = new RoteadorReal(); 
+        }
+        return roteadorReal.statusConexao();
     }
 }
 
 public class ExemploProxyRemoto {
     public static void main(String[] args) {
-        ServicoRemoto servico = new ProxyRemoto();
-        System.out.println(servico.obterDados());
+        Roteador roteador = new ProxyRoteador("192.168.0.1");
+        roteador.reiniciar();
+        System.out.println(roteador.statusConexao());
     }
 }
-
 ```
 ## 2. Proxy Virtual
 Este Proxy é usado para criar objetos pesados sob demanda, economizando recursos ao evitar a criação de instâncias até que sejam realmente necessárias.
