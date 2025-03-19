@@ -34,7 +34,7 @@ classDiagram
     SistemaSaude <|.. ProxySistemaSaude
 ```
 
-##Estrutura GOF
+## Estrutura GOF
 ![image](https://github.com/user-attachments/assets/778e1992-85ca-4506-a5ee-cb1df4c2cb6b)
 
 ## Exemplo do Código
