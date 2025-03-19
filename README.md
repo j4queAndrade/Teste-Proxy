@@ -72,12 +72,12 @@ class SistemaSaudeReal implements SistemaSaude {
 }
 
 class ProxySistemaSaude implements SistemaSaude {
-    private SistemaSaudeReal sistemaReal; // Referência para o objeto real
-    private String usuario; // Usuário atual
+    private SistemaSaudeReal sistemaReal;
+    private String usuario;
 
     public ProxySistemaSaude(String usuario) {
         this.usuario = usuario;
-        this.sistemaReal = new SistemaSaudeReal(); // Cria o objeto real
+        this.sistemaReal = new SistemaSaudeReal();
     }
 
     @Override
